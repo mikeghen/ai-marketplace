@@ -17,11 +17,11 @@ const alchemyId = NEXT_PUBLIC_ALCHEMY_ID
 const etherscanApiKey = NEXT_PUBLIC_ETHERSCAN_API_KEY
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum, chain.localhost],
+  [chain.arbitrum, chain.localhost],
   [alchemyProvider({ apiKey: alchemyId }), publicProvider()],
 )
 const { connectors } = getDefaultWallets({
-  appName: 'Web 3 Starter App',
+  appName: 'AI Marketplace Chat Demo',
   chains,
 })
 
