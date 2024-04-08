@@ -1,6 +1,24 @@
 # AI Marketplace
 AI Marketplace is a platform that allows users to share and sell their AI models. The platform is built with a payment system handled on chain. Service providers offer to host a LangChain Runtime Environment where a Python workload can be executed using LangChain. Use a model for a chat and pay per use. 
 
+## Architecture
+```mermaid
+graph TB
+    UM["Users"] -- "Submit Request" --> AM["AI Marketplace"]
+    UM -- "Payment" --> AM
+    AM -- "Tip with Request" --> H["TellorFlex"]
+    AM -- "Payment" --> H["TellorFlex"]
+    H -- "Receives Request" --> R["Reporter"]
+    R -- "Invokes LLM" --> LRE["LangChain Runtime Environment"]
+    LRE -- "Utilizes" --> LC["LangChain"]
+    LC -- "Runs Python Script" --> PA["Python"]
+    PA -- "Submits Response" --> H
+    style AM fill:#09f,stroke:#333,stroke-width:4px
+    style H fill:#0b0,stroke:#333,stroke-width:2px
+    style R fill:#0b0,stroke:#333,stroke-width:2px
+    style LRE fill:#dfd,stroke:#333,stroke-width:2px
+```
+
 # Concepts
 ## Workload
 A workload is a Python script that defines a LangChain model.
@@ -49,7 +67,7 @@ Publish your prompt and input into a transaction onchain along with an amount of
 ## Hosts
 Hosts listen to a onchain index of workloads and execute them. They are paid for their services.
 
-
+# Tellor Integration
 
 # Future Work
 * Better Model Execution Runtime Environment - The current runtime environment is very basic and could be improved.
