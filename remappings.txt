@@ -1,2 +1,3 @@
 forge-std/=lib/forge-std/src/
 usingtellor/=lib/usingtellor/contracts/
+@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/

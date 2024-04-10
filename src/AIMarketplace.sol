@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "usingtellor/UsingTellor.sol";
+import "./interfaces/IAutopay.sol";
 
 contract AIMarketplace is UsingTellor {
     struct Request {
@@ -15,21 +17,22 @@ contract AIMarketplace is UsingTellor {
         uint256 timestamp; // Timestamp of the Tellor query submission
     }
 
+    IAutopay public autopay;
+    IERC20 public trb;
     uint256 public nextRequestId = 0;
     mapping(uint256 => Request) public requests;
-    address public owner;
     mapping(bytes32 => uint256) public queryIdToRequestId;
 
     event RequestSubmitted(uint256 requestId, bytes32 queryId, uint256 payment);
     event QueryResultRetrieved(uint256 requestId, string result);
 
-    constructor(address payable tellorAddress) UsingTellor(tellorAddress) {
-        owner = msg.sender;
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only the contract owner can call this function");
-        _;
+    constructor(
+        address payable tellorAddress, 
+        address autopayAddress,
+        address trbAddress
+    ) UsingTellor(tellorAddress) {
+        autopay = IAutopay(autopayAddress);
+        trb = IERC20(trbAddress);
     }
 
     function submitRequest(
@@ -37,9 +40,9 @@ contract AIMarketplace is UsingTellor {
         string memory userPrompt,
         string memory model,
         uint8 temperature,
-        uint256 payment
-    ) external payable {
-        require(msg.value == payment, "Payment must match the transaction value");
+        uint256 paymentTrb
+    ) external {
+        trb.transferFrom(msg.sender, address(this), paymentTrb);
 
         uint256 requestId = nextRequestId++;
         requests[requestId] = Request({
@@ -48,14 +51,17 @@ contract AIMarketplace is UsingTellor {
             model: model,
             temperature: temperature,
             requester: msg.sender,
-            payment: payment,
+            payment: paymentTrb,
             executed: false,
             timestamp: block.timestamp // Store submission timestamp
         });
 
         queryIdToRequestId[_queryId()] = requestId;
 
-        emit RequestSubmitted(requestId, _queryId(), payment);
+        // Tip Tellor for the query
+        autopay.tip(_queryId(), paymentTrb, _queryData());
+
+        emit RequestSubmitted(requestId, _queryId(), paymentTrb);
     }
 
     function getQueryResult(uint256 requestId) public view returns (string memory responseString) {

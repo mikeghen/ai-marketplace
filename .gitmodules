@@ -4,3 +4,9 @@
 [submodule "lib/usingtellor"]
 	path = lib/usingtellor
 	url = https://github.com/tellor-io/usingtellor
+[submodule "lib/autoPay"]
+	path = lib/autoPay
+	url = https://github.com/tellor-io/autoPay
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
