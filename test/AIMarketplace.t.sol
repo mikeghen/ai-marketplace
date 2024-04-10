@@ -36,11 +36,22 @@ contract AIMarketplaceTest is Test {
         vm.stopPrank();
 
         uint256 requestId = 0; // Assuming this is the first and only request
-        bytes32 queryId = keccak256(abi.encode(systemPrompt, userPrompt, model, temperature));
+        bytes memory queryData = abi.encode(
+            "ChatOpenAI",
+            abi.encode(
+                "You're a developer", 
+                "What is Tellor?", 
+                "gpt-3", 
+                10
+            )
+        );
+        bytes32 queryId = keccak256(queryData);
         bytes memory response = "Test Response";
 
         // Simulate the Tellor oracle providing a response
-        tellorPlayground.submitValue(queryId, response, 0, "");
+        tellorPlayground.submitValue(queryId, response, 0, queryData);
+
+        vm.warp(block.timestamp + 1); // Advance the block timestamp by 1 second
 
         // Retrieve the query result
         string memory result = aiMarketplace.getQueryResult(requestId);

@@ -42,9 +42,6 @@ contract AIMarketplace is UsingTellor {
         require(msg.value == payment, "Payment must match the transaction value");
 
         uint256 requestId = nextRequestId++;
-        bytes memory queryData = abi.encode(systemPrompt, userPrompt, model, temperature);
-        bytes32 queryId = keccak256(queryData);
-
         requests[requestId] = Request({
             systemPrompt: systemPrompt,
             userPrompt: userPrompt,
@@ -56,20 +53,33 @@ contract AIMarketplace is UsingTellor {
             timestamp: block.timestamp // Store submission timestamp
         });
 
-        queryIdToRequestId[queryId] = requestId;
+        queryIdToRequestId[_queryId()] = requestId;
 
-        // Note: Actual submission to Tellor not shown, as TellorPlayground's submitValue might not directly correspond to how you intend to use Tellor
-        emit RequestSubmitted(requestId, queryId, payment);
+        emit RequestSubmitted(requestId, _queryId(), payment);
     }
 
     function getQueryResult(uint256 requestId) public view returns (string memory responseString) {
         Request storage request = requests[requestId];
         require(request.timestamp != 0, "Request does not exist");
         require(!request.executed, "Query already executed");
-
-        bytes32 queryId = keccak256(abi.encode(request.systemPrompt, request.userPrompt, request.model, request.temperature));
         // Assuming getDataBefore function can be used here based on TellorPlayground's functionality
-        (bytes memory response,) = getDataBefore(queryId, block.timestamp);
+        (bytes memory response,) = getDataBefore(_queryId(), block.timestamp);
         responseString = string(response);
+    }
+
+    function _queryData() internal pure returns (bytes memory) {
+        return abi.encode(
+            "ChatOpenAI",
+            abi.encode(
+                "You're a developer", 
+                "What is Tellor?", 
+                "gpt-3", 
+                10
+            )
+        );
+    }
+
+    function _queryId() internal pure returns (bytes32) {
+        return keccak256(_queryData());
     }
 }
