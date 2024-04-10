@@ -1,6 +1,11 @@
 # AI Marketplace
 AI Marketplace is a platform that allows users to share and sell their AI models. The platform is built with a payment system handled on chain. Service providers offer to host a LangChain Runtime Environment where a Python workload can be executed using LangChain. Use a model for a chat and pay per use. 
 
+## Chat Demo
+The Chat demo uses the AI Marketplace on the back end to answer user prompts. User's pay for each reponse using ETH.
+
+![Chat Demo](images/AIMChatView.png)
+
 ## Architecture
 ```mermaid
 graph TB

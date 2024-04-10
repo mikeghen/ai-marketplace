@@ -19,6 +19,71 @@ const ViewChat = () => {
         setMessage('');
     };
 
+    const styles = {
+        chatContainer: {
+            borderRadius: '20px',
+            overflow: 'hidden',
+            fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        },
+        chatHeader: {
+            backgroundColor: '#f7f7f7',
+            color: '#000',
+            textAlign: 'center',
+            padding: '10px 0',
+            fontSize: '18px',
+            borderBottom: '1px solid #ddd',
+        },
+        chatBody: {
+            padding: '10px',
+            height: '500px', // Adjust as needed
+            overflowY: 'scroll',
+            backgroundColor: '#E5E5EA', // Light gray background similar to iMessage
+        },
+        messageInput: {
+            display: 'flex',
+            padding: '10px',
+            backgroundColor: '#f7f7f7',
+            borderTop: '1px solid #ddd',
+        },
+        inputField: {
+            flex: 1,
+            padding: '10px',
+            borderRadius: '20px',
+            border: '1px solid #ddd',
+            marginRight: '10px',
+        },
+        sendButton: {
+            display: 'inline-block',
+            fontSize: '16px',
+            padding: '10px 15px',
+            color: '#007bff', // iOS send button color
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+        },
+        userMessage: {
+            backgroundColor: '#007AFF', // Blue bubble for user messages
+            color: '#fff',
+            padding: '8px 12px',
+            borderRadius: '18px',
+            maxWidth: '60%',
+            marginLeft: 'auto',
+            marginBottom: '8px',
+            wordBreak: 'break-word',
+        },
+        botMessage: {
+            backgroundColor: '#fff', // White bubble for bot/received messages
+            color: '#000',
+            padding: '8px 12px',
+            borderRadius: '18px',
+            maxWidth: '60%',
+            marginRight: 'auto',
+            marginBottom: '8px',
+            wordBreak: 'break-word',
+            border: '1px solid #ddd',
+        }
+    };
+
     return (
         <div className="container-fluid">
             <div className="row">
@@ -61,22 +126,18 @@ const ViewChat = () => {
 
                 {/* Second column for the chat window */}
                 <div className="col-md-8">
-                    <div className="card">
-                        <div className="card-header">Chat with {model}</div>
-                        <div className="card-body">
-                            <div className="chat-history">
-                                {chatHistory.map(msg => (
-                                    <div key={msg.id} className={msg.sender === 'user' ? 'alert alert-light' : 'alert alert-primary'}>
-                                        {msg.text}
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="input-group mt-3">
-                                <input type="text" className="form-control" placeholder="Type your message here..." value={message} onChange={e => setMessage(e.target.value)} />
-                                <div className="input-group-append">
-                                    <button className="btn btn-primary" type="button" onClick={sendMessage}>Send</button>
+                    <div style={styles.chatContainer}>
+                        <div style={styles.chatHeader}>Chat with {model}</div>
+                        <div style={styles.chatBody}>
+                            {chatHistory.map(msg => (
+                                <div key={msg.id} style={msg.sender === 'user' ? styles.userMessage : styles.botMessage}>
+                                    {msg.text}
                                 </div>
-                            </div>
+                            ))}
+                        </div>
+                        <div style={styles.messageInput}>
+                            <input type="text" placeholder="Type your message here..." value={message} onChange={e => setMessage(e.target.value)} style={styles.inputField} />
+                            <button onClick={sendMessage} style={styles.sendButton}>Send</button>
                         </div>
                     </div>
                 </div>
