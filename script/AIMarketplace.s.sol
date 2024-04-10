@@ -7,7 +7,7 @@ import "../src/AIMarketplace.sol";
 import "../src/mocks/MockAutopay.sol";
 import "usingtellor/TellorPlayground.sol";
 
-contract CounterScript is Script {
+contract AIMarketplaceScript is Script {
     function setUp() public {}
 
     function run() public { 
