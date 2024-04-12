@@ -18,9 +18,16 @@ contract ReadQueryData is Script, Constants {
         // Console log all of the AI Marketplaces Requests
         IAIMarketplace aiMarketplace = IAIMarketplace(AI_MARKETPLACE);
         console.log("aiMarketplace", address(aiMarketplace));
-
+    
+        bytes32 queryId = aiMarketplace.queryId(
+            systemPrompt,
+            userPrompt,
+            model,
+            temperature
+        );
         
-        
+        string memory response = aiMarketplace.getQueryResult(queryId);
+        console.log("response", response);
         
     }
 }

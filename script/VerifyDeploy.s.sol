@@ -7,14 +7,10 @@ import "../src/AIMarketplace.sol";
 import "../src/interfaces/IAIMarketplace.sol";
 import "../src/interfaces/ITellorPlayground.sol";
 import "../src/mocks/MockAutopay.sol";
+import "./Constants.s.sol";
 import "usingtellor/TellorPlayground.sol";
 
-contract VerifyDeploy is Script {
-
-    // broadcast/AIMarketplace/run-latest.json
-    address constant TELLOR_PLAYGROUND = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
-    address constant MOCK_AUTOPAY = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
-    address constant AI_MARKETPLACE = 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0;
+contract VerifyDeploy is Script, Constants {
 
     function setUp() public {}
 
@@ -40,11 +36,6 @@ contract VerifyDeploy is Script {
 
         // Requester submits a request to the AIMarketplace
         vm.startBroadcast(requesterPrivateKey);
-        string memory systemPrompt = "You're a developer";
-        string memory userPrompt = "What is Tellor";
-        string memory model = "gpt-3";
-        uint8 temperature = 10;
-        uint256 payment = 1 ether;
 
         tellorPlayground.approve(address(aiMarketplace), payment);
         aiMarketplace.submitRequest(systemPrompt, userPrompt, model, temperature, payment);
@@ -71,7 +62,7 @@ contract VerifyDeploy is Script {
         vm.stopBroadcast();
 
         // FIX: Submitted value `response` not recovered in getQueryResult
-        string memory result = aiMarketplace.getQueryResult(requestId);
+        string memory result = aiMarketplace.getQueryResult(queryId);
         console.log("Result: ", result);
     }
 }

@@ -23,5 +23,6 @@ interface IAIMarketplace {
         uint8 temperature,
         uint256 paymentTrb
     ) external;
-    function getQueryResult(uint256 requestId) external view returns (string memory);
+    
+    function getQueryResult(bytes32 queryId) external view returns (string memory);
 }
