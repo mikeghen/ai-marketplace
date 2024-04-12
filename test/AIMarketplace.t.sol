@@ -23,6 +23,7 @@ contract AIMarketplaceTest is Test {
 
         // 1000 TRB for this test
         tellorPlayground.faucet(address(this));
+        console.log("faucet for test: ", tellorPlayground.balanceOf(address(this)));
     }
 
     function testSubmitAndRetrieveQuery() public {
@@ -39,17 +40,19 @@ contract AIMarketplaceTest is Test {
         aiMarketplace.submitRequest(systemPrompt, userPrompt, model, temperature, paymentTrb);
         vm.stopPrank();
 
-        uint256 requestId = 0; // Assuming this is the first and only request
-        bytes memory queryData = abi.encode(
-            "ChatOpenAI",
-            abi.encode(
-                "You're a developer", 
-                "What is Tellor?", 
-                "gpt-3", 
-                10
-            )
+        bytes32 queryId = aiMarketplace.queryId(
+            systemPrompt,
+            userPrompt,
+            model,
+            temperature
         );
-        bytes32 queryId = keccak256(queryData);
+
+        bytes memory queryData = aiMarketplace.queryData(
+            systemPrompt,
+            userPrompt,
+            model,
+            temperature
+        );
 
         // Check the tip was received
         assertEq(autopay.getCurrentTip(queryId), paymentTrb, "The tip amount does not match the expected value.");
@@ -62,7 +65,7 @@ contract AIMarketplaceTest is Test {
         vm.warp(block.timestamp + 1); // Advance the block timestamp by 1 second
 
         // Retrieve the query result
-        string memory result = aiMarketplace.getQueryResult(requestId);
+        string memory result = aiMarketplace.getQueryResult(queryId);
 
         // Assertions
         assertEq(result, "Test Response", "The retrieved result does not match the expected response.");

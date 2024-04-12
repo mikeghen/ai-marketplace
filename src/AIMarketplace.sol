@@ -56,36 +56,54 @@ contract AIMarketplace is UsingTellor {
             timestamp: block.timestamp // Store submission timestamp
         });
 
-        queryIdToRequestId[_queryId()] = requestId;
+        bytes32 _queryId = queryId(systemPrompt, userPrompt, model, temperature);
+
+        queryIdToRequestId[_queryId] = requestId;
 
         // Tip Tellor for the query
-        autopay.tip(_queryId(), paymentTrb, _queryData());
+        autopay.tip(_queryId, paymentTrb, queryData(
+            systemPrompt,
+            userPrompt,
+            model,
+            temperature
+        ));
 
-        emit RequestSubmitted(requestId, _queryId(), paymentTrb);
+        emit RequestSubmitted(requestId, _queryId, paymentTrb);
     }
 
-    function getQueryResult(uint256 requestId) public view returns (string memory responseString) {
-        Request storage request = requests[requestId];
-        require(request.timestamp != 0, "Request does not exist");
-        require(!request.executed, "Query already executed");
-        // Assuming getDataBefore function can be used here based on TellorPlayground's functionality
-        (bytes memory response,) = getDataBefore(_queryId(), block.timestamp);
+    function getQueryResult(bytes32 _queryId) public view returns (string memory responseString) {
+        (bytes memory response,) = getDataBefore(_queryId, block.timestamp + 1);
         responseString = string(response);
     }
 
-    function _queryData() internal pure returns (bytes memory) {
+    function queryData(
+        string memory systemPrompt,
+        string memory userPrompt,
+        string memory model,
+        uint8 temperature
+    ) public pure returns (bytes memory) {
         return abi.encode(
             "ChatOpenAI",
             abi.encode(
-                "You're a developer", 
-                "What is Tellor?", 
-                "gpt-3", 
-                10
+                systemPrompt,
+                userPrompt,
+                model,
+                temperature
             )
         );
     }
 
-    function _queryId() internal pure returns (bytes32) {
-        return keccak256(_queryData());
+    function queryId(
+        string memory systemPrompt,
+        string memory userPrompt,
+        string memory model,
+        uint8 temperature
+    ) public pure returns (bytes32) {
+        return keccak256(queryData(
+            systemPrompt,
+            userPrompt,
+            model,
+            temperature
+        ));
     }
 }
