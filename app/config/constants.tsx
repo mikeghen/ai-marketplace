@@ -1,0 +1,8 @@
+import ERC20 from './abis/ERC20.json'
+import MARKETPLACE from './abis/MARKETPLACE.json'
+
+export const ERC20_ABI = ERC20
+export const MARKETPLACE_ABI = MARKETPLACE
+
+export const TRB_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+export const MARKETPLACE_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'

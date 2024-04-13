@@ -1,0 +1,637 @@
+[
+    {
+        "type": "constructor",
+        "inputs": [
+            {
+                "name": "tellorAddress",
+                "type": "address",
+                "internalType": "address payable"
+            },
+            {
+                "name": "autopayAddress",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "trbAddress",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "autopay",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "contract IAutopay"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getDataAfter",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_value",
+                "type": "bytes",
+                "internalType": "bytes"
+            },
+            {
+                "name": "_timestampRetrieved",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getDataBefore",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_value",
+                "type": "bytes",
+                "internalType": "bytes"
+            },
+            {
+                "name": "_timestampRetrieved",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getIndexForDataAfter",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_found",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "_index",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getIndexForDataBefore",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_found",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "_index",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getMultipleValuesBefore",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "_maxAge",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "_maxCount",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_values",
+                "type": "bytes[]",
+                "internalType": "bytes[]"
+            },
+            {
+                "name": "_timestamps",
+                "type": "uint256[]",
+                "internalType": "uint256[]"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getNewValueCountbyQueryId",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getQueryResult",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "responseString",
+                "type": "string",
+                "internalType": "string"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getReporterByTimestamp",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getTimestampbyQueryIdandIndex",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_index",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "idMappingContract",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "contract IMappingContract"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "isInDispute",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "nextRequestId",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "queryData",
+        "inputs": [
+            {
+                "name": "systemPrompt",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "userPrompt",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "model",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "temperature",
+                "type": "uint8",
+                "internalType": "uint8"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bytes",
+                "internalType": "bytes"
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "function",
+        "name": "queryId",
+        "inputs": [
+            {
+                "name": "systemPrompt",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "userPrompt",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "model",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "temperature",
+                "type": "uint8",
+                "internalType": "uint8"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "function",
+        "name": "queryIdToRequestId",
+        "inputs": [
+            {
+                "name": "",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "requests",
+        "inputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "systemPrompt",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "userPrompt",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "model",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "temperature",
+                "type": "uint8",
+                "internalType": "uint8"
+            },
+            {
+                "name": "requester",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "payment",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "executed",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "retrieveData",
+        "inputs": [
+            {
+                "name": "_queryId",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bytes",
+                "internalType": "bytes"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "setIdMappingContract",
+        "inputs": [
+            {
+                "name": "_addy",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "submitRequest",
+        "inputs": [
+            {
+                "name": "systemPrompt",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "userPrompt",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "model",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "temperature",
+                "type": "uint8",
+                "internalType": "uint8"
+            },
+            {
+                "name": "paymentTrb",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "tellor",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "contract ITellor"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "trb",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "contract IERC20"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "valueFor",
+        "inputs": [
+            {
+                "name": "_id",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "_value",
+                "type": "int256",
+                "internalType": "int256"
+            },
+            {
+                "name": "_timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "_statusCode",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "event",
+        "name": "QueryResultRetrieved",
+        "inputs": [
+            {
+                "name": "requestId",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "result",
+                "type": "string",
+                "indexed": false,
+                "internalType": "string"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "RequestSubmitted",
+        "inputs": [
+            {
+                "name": "requestId",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "queryId",
+                "type": "bytes32",
+                "indexed": false,
+                "internalType": "bytes32"
+            },
+            {
+                "name": "payment",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    }
+]

@@ -1,5 +1,23 @@
 import React, { useState } from 'react';
-import { useAccount } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
+import { ethers } from "ethers";
+import { MARKETPLACE_ADDRESS, MARKETPLACE_ABI } from "../config/constants";
+import { 
+    queryData,
+    queryId,
+    getQueryResult,
+    submitRequest,
+    approve,
+    allowance
+ } from "../utils/ethereum";
+import toast from "react-hot-toast";
+
+
+type ChatMessage = {
+    id: number;
+    text: string;
+    sender: string;
+};
 
 const ViewChat = () => {
     const { address } = useAccount();
@@ -7,16 +25,54 @@ const ViewChat = () => {
     const [userPrompt, setUserPrompt] = useState('');
     const [model, setModel] = useState('GPT-4');
     const [temperature, setTemperature] = useState('');
-    const [message, setMessage] = useState('');
-    const [chatHistory, setChatHistory] = useState([]);
+    const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+    const [sendLoading, setSendLoading] = useState(false);
+    const [currentQueryId, setCurrentQueryId] = useState<string>('');
 
-    const sendMessage = () => {
-        if (!message.trim()) return;
-        const newMessage = { id: chatHistory.length + 1, text: message, sender: 'user' };
-        const reply = { id: chatHistory.length + 2, text: "Thank you", sender: 'bot' };
+    // Get Goal Data
+    const queryResult = useContractRead({
+        addressOrName: MARKETPLACE_ADDRESS,
+        contractInterface: MARKETPLACE_ABI,
+        functionName: "getQueryResult",
+        args: [currentQueryId],
+        watch: true,
+    });
+
+
+    const sendMessage = async () => {
+        const payment = BigInt("1000000000000000000"); // 1 TRB
+        console.log("User Prompt: ", userPrompt);
+        console.log("System Prompt: ", systemPrompt);
+        console.log("Model: ", model);
+        console.log("Temperature: ", temperature);
+        console.log("Payment: ", payment);
+
+        // Try to approve the goalz contract to spend the amount
+        try {
+            setSendLoading(true);
+            await submitRequest(
+                systemPrompt,
+                userPrompt,
+                model,
+                Number(temperature),
+                payment
+            );
+            toast.success('Message sent 📬');
+        } catch (error) {
+            console.log("AIMarketplace#submitRequest Error:", error);
+            toast.error('Error sending message');
+            return
+        } finally {
+            setSendLoading(false);
+        }
+
+        if (!userPrompt.trim()) return;
+        const newMessage = { id: chatHistory.length + 1, text: `System: ${systemPrompt}; User Prompt: ${userPrompt}; Temperature: ${temperature}; Model: ${model}`, sender: 'user' };
+         
+        const reply = { id: chatHistory.length + 2, text: "⏳", sender: 'bot' };
 
         setChatHistory(chatHistory => [...chatHistory, newMessage, reply]);
-        setMessage('');
+        setUserPrompt('');
     };
 
     const styles = {
@@ -136,8 +192,14 @@ const ViewChat = () => {
                             ))}
                         </div>
                         <div style={styles.messageInput}>
-                            <input type="text" placeholder="Type your message here..." value={message} onChange={e => setMessage(e.target.value)} style={styles.inputField} />
-                            <button onClick={sendMessage} style={styles.sendButton}>Send</button>
+                            <input type="text" placeholder="Type your message here..." value={userPrompt} onChange={e => setUserPrompt(e.target.value)} style={styles.inputField} />
+                            <button onClick={sendMessage} style={styles.sendButton}>
+                            { sendLoading ? (
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            ) : (
+                                'Send'
+                            )}
+                            </button>
                         </div>
                     </div>
                 </div>

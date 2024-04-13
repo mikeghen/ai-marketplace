@@ -41,7 +41,7 @@ contract AIMarketplace is UsingTellor {
         string memory model,
         uint8 temperature,
         uint256 paymentTrb
-    ) external {
+    ) external returns (bytes32 _queryId) {
         trb.transferFrom(msg.sender, address(this), paymentTrb);
 
         uint256 requestId = nextRequestId++;
@@ -56,7 +56,7 @@ contract AIMarketplace is UsingTellor {
             timestamp: block.timestamp // Store submission timestamp
         });
 
-        bytes32 _queryId = queryId(systemPrompt, userPrompt, model, temperature);
+        _queryId = queryId(systemPrompt, userPrompt, model, temperature);
 
         queryIdToRequestId[_queryId] = requestId;
 
