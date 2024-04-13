@@ -53,12 +53,18 @@ export const submitRequest = async (
         MARKETPLACE_ABI,
         signer
     );
+    console.log("Submitting request")
+    console.log("System Prompt: ", systemPrompt);
+    console.log("User Prompt: ", userPrompt);
+    console.log("Model: ", model);
+    console.log("Temperature: ", temperature);
     const tx = await marketplace.submitRequest(
         systemPrompt,
         userPrompt,
         model,
         temperature,
-        paymentTrb
+        paymentTrb,
+        {gasLimit: 1000000}
     );
     return await tx.wait();
 };

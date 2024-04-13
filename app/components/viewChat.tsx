@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAccount, useContractRead } from "wagmi";
 import { ethers } from "ethers";
-import { MARKETPLACE_ADDRESS, MARKETPLACE_ABI } from "../config/constants";
-import { 
+import { MARKETPLACE_ADDRESS, MARKETPLACE_ABI, TRB_ADDRESS, ERC20_ABI } from "../config/constants";
+import {
     queryData,
     queryId,
     getQueryResult,
     submitRequest,
     approve,
     allowance
- } from "../utils/ethereum";
+} from "../utils/ethereum";
 import toast from "react-hot-toast";
 
 
@@ -28,6 +28,9 @@ const ViewChat = () => {
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
     const [sendLoading, setSendLoading] = useState(false);
     const [currentQueryId, setCurrentQueryId] = useState<string>('');
+    const [currentResult, setCurrentResult] = useState<string>('');
+    const [isAllowed, setIsAllowed] = useState<boolean>(false);
+    const [approveLoading, setApproveLoading] = useState(false);
 
     // Get Goal Data
     const queryResult = useContractRead({
@@ -38,9 +41,34 @@ const ViewChat = () => {
         watch: true,
     });
 
+    useEffect(() => {
+        if (queryResult.data) {
+            setCurrentResult(queryResult.data.toNumber());
+        }
+    }, [queryResult.data]);
+
+    const allowance = useContractRead({
+        addressOrName: TRB_ADDRESS,
+        contractInterface: ERC20_ABI,
+        functionName: "allowance",
+        args: [address, MARKETPLACE_ADDRESS],
+        watch: true,
+    });
+
+    useEffect(() => {
+        console.log("allowance.data", allowance.data);
+        if (allowance.data) {
+            if (allowance.data.gt(0)) {
+                setIsAllowed(true);
+            } else {
+                setIsAllowed(false);
+            }
+        }
+    }, [allowance.data]);
+
 
     const sendMessage = async () => {
-        const payment = BigInt("1000000000000000000"); // 1 TRB
+        const payment = 0;
         console.log("User Prompt: ", userPrompt);
         console.log("System Prompt: ", systemPrompt);
         console.log("Model: ", model);
@@ -55,9 +83,17 @@ const ViewChat = () => {
                 userPrompt,
                 model,
                 Number(temperature),
-                payment
+                BigInt(payment)
             );
             toast.success('Message sent 📬');
+            setCurrentQueryId(
+                await queryId(
+                    systemPrompt,
+                    userPrompt,
+                    model,
+                    Number(temperature)
+                )
+            );
         } catch (error) {
             console.log("AIMarketplace#submitRequest Error:", error);
             toast.error('Error sending message');
@@ -68,12 +104,25 @@ const ViewChat = () => {
 
         if (!userPrompt.trim()) return;
         const newMessage = { id: chatHistory.length + 1, text: `System: ${systemPrompt}; User Prompt: ${userPrompt}; Temperature: ${temperature}; Model: ${model}`, sender: 'user' };
-         
+
         const reply = { id: chatHistory.length + 2, text: "⏳", sender: 'bot' };
 
         setChatHistory(chatHistory => [...chatHistory, newMessage, reply]);
         setUserPrompt('');
     };
+
+    const handleApprove = async () => {
+        try {
+            setApproveLoading(true);
+            await approve(TRB_ADDRESS);
+            toast.success('TRB approved for the contract');
+        } catch (error) {
+            console.log("Error approving TRB for the contract:", error);
+            toast.error('Error approving TRB for the contract');
+        } finally {
+            setApproveLoading(false);
+        }
+    }
 
     const styles = {
         chatContainer: {
@@ -193,14 +242,38 @@ const ViewChat = () => {
                         </div>
                         <div style={styles.messageInput}>
                             <input type="text" placeholder="Type your message here..." value={userPrompt} onChange={e => setUserPrompt(e.target.value)} style={styles.inputField} />
-                            <button onClick={sendMessage} style={styles.sendButton}>
-                            { sendLoading ? (
-                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                
+                            { isAllowed ? (
+                                <button onClick={sendMessage} style={styles.sendButton}>
+                                    {sendLoading ? (
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    ) : (
+                                        'Send'
+                                    )}
+                                </button>
                             ) : (
-                                'Send'
+                                <button onClick={handleApprove} style={styles.sendButton}>
+                                    {approveLoading ? (
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    ) : (
+                                        'Approve'
+                                    )}
+                                </button>
                             )}
-                            </button>
                         </div>
+                        {
+                            currentResult !== '' ? (
+                                <div>
+                                    <h3>Result:</h3>
+                                    <p>{currentResult}</p>
+                                </div>
+                            ) : (
+                                <div>
+                                    <h3>Result:</h3>
+                                    <p>Waiting for result for {currentQueryId} </p>
+                                </div>
+                            )
+                        }
                     </div>
                 </div>
             </div>

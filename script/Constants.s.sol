@@ -9,7 +9,7 @@ contract Constants {
 
     string systemPrompt = "You're a developer";
     string userPrompt = "What is Tellor";
-    string model = "gpt-3";
+    string model = "GPT-4";
     uint8 temperature = 10;
     uint256 payment = 1 ether;
 }
