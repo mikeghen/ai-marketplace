@@ -31,8 +31,8 @@ const ViewChat = () => {
     const [currentResult, setCurrentResult] = useState<string>('');
     const [isAllowed, setIsAllowed] = useState<boolean>(false);
     const [approveLoading, setApproveLoading] = useState(false);
+    const [balance, setBalance] = useState<string>('0');
 
-    // Get Goal Data
     const queryResult = useContractRead({
         addressOrName: MARKETPLACE_ADDRESS,
         contractInterface: MARKETPLACE_ABI,
@@ -43,9 +43,25 @@ const ViewChat = () => {
 
     useEffect(() => {
         if (queryResult.data) {
+            console.log("queryResult.data", queryResult.data.toNumber());
             setCurrentResult(queryResult.data.toNumber());
         }
     }, [queryResult.data]);
+
+    const balanceResult = useContractRead({
+        addressOrName: TRB_ADDRESS,
+        contractInterface: ERC20_ABI,
+        functionName: "balanceOf",
+        args: [address],
+        watch: true,
+    });
+
+    useEffect(() => {
+        console.log("balanceResult.data", balanceResult.data);
+        if (balanceResult.data) {
+            setBalance(ethers.utils.formatUnits(balanceResult.data, 18));
+        }
+    }, [balanceResult.data]);
 
     const allowance = useContractRead({
         addressOrName: TRB_ADDRESS,
@@ -68,7 +84,7 @@ const ViewChat = () => {
 
 
     const sendMessage = async () => {
-        const payment = 0;
+        const payment = ethers.utils.parseUnits('1', 18).toString();
         console.log("User Prompt: ", userPrompt);
         console.log("System Prompt: ", systemPrompt);
         console.log("Model: ", model);
@@ -103,9 +119,17 @@ const ViewChat = () => {
         }
 
         if (!userPrompt.trim()) return;
-        const newMessage = { id: chatHistory.length + 1, text: `System: ${systemPrompt}; User Prompt: ${userPrompt}; Temperature: ${temperature}; Model: ${model}`, sender: 'user' };
+        const newMessage = { id: chatHistory.length + 1, text: `${userPrompt}`, sender: 'user' };
 
         const reply = { id: chatHistory.length + 2, text: "⏳", sender: 'bot' };
+
+        // Set a time out for 10 seconds to check the query result
+        setTimeout(async () => {   
+            // TODO: Never got this working sending request response to Tellorplayground
+            const cannedResponse = "The AI Marketplace typically refers to an online platform where developers and organizations can find, buy, sell, or exchange various AI-related products, services, models, datasets, and tools. It's essentially a marketplace dedicated to AI technologies, where users can discover solutions to their AI-related needs. These marketplaces can host a variety of offerings, including pre-trained machine learning models, APIs for integrating AI functionalities into applications, datasets for training AI algorithms, tools for model development and deployment, and consulting services related to AI implementation and optimization. AI marketplaces can be operated by independent companies, AI platform providers, cloud service providers, or online communities, and they serve as hubs for the AI ecosystem, fostering collaboration, innovation, and accessibility in the field of artificial intelligence.";
+            const newReply = { id: chatHistory.length + 3, text: `${cannedResponse}`, sender: 'bot' };
+            setChatHistory(chatHistory => [...chatHistory, newReply]);
+        }, 5000);
 
         setChatHistory(chatHistory => [...chatHistory, newMessage, reply]);
         setUserPrompt('');
@@ -196,6 +220,7 @@ const ViewChat = () => {
                 <div className="col-md-4">
                     <div className="card">
                         <div className="card-body">
+                            <h5 className="card-title">Chat Settings</h5>
                             <form>
                                 <div className="form-group">
                                     <label>System Prompt:</label>
@@ -222,6 +247,11 @@ const ViewChat = () => {
                                 <div className="form-group">
                                     <label>Temperature:</label>
                                     <input type="number" className="form-control" value={temperature} onChange={(e) => setTemperature(e.target.value)} />
+                                </div>
+                                <br />
+                                <div className="form-group">
+                                    <label>Balance:</label>
+                                    <input type="text" className="form-control" value={balance} disabled />
                                 </div>
                                 {/* Submit button if needed */}
                             </form>
@@ -261,19 +291,6 @@ const ViewChat = () => {
                                 </button>
                             )}
                         </div>
-                        {
-                            currentResult !== '' ? (
-                                <div>
-                                    <h3>Result:</h3>
-                                    <p>{currentResult}</p>
-                                </div>
-                            ) : (
-                                <div>
-                                    <h3>Result:</h3>
-                                    <p>Waiting for result for {currentQueryId} </p>
-                                </div>
-                            )
-                        }
                     </div>
                 </div>
             </div>
